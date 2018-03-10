@@ -48,8 +48,8 @@ Optional configuration steps:
 While containers are up, access via your browser at https://127.0.0.1. 
 
 ``` bash
-# git clone https://github.com/sethll/docker-nginx-django-postgresql.git dndp
-# cd dndp 
+# git clone https://github.com/sethll/django-dev-env.git
+# cd django-dev-env 
 docker-compose build 
 docker-compose up -d
 # or, to view status messages and keep an eye on behavior, just run:
