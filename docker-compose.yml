@@ -1,0 +1,101 @@
+version: '3.3'
+
+services:
+  web:
+    restart: always
+    build: './app_source/.'
+    env_file: 
+      - 'env-shared'
+      - 'env-db'
+    networks:
+      - frontend
+      - backend_db
+      - backend_mq
+    volumes:
+      - './app_source:/app_source'
+    expose:
+      - '8000'
+    depends_on:
+      - postgres
+      - celery_worker
+      - rabbitmq
+    secrets:
+      - postgres_password
+      - rabbitmq_password
+    command: '/bin/bash -c "source /app_source/run_web.sh"'
+
+  nginx:
+    restart: always
+    build: './docks/nginx/.'
+    volumes:
+      - './static:/static'
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+    depends_on:
+      - web
+    networks:
+      - frontend
+    secrets:
+      - ssl_key
+      - ssl_cert
+
+  postgres:
+    restart: always
+    image: 'postgres:alpine'
+    environment:
+      POSTGRES_DB_PASSWORD_FILE: /run/secrets/postgres_password
+    expose:
+      - "5432"
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data/'
+    networks:
+      - backend_db
+    secrets:
+      - postgres_password
+
+  rabbitmq:
+    restart: always
+    image: 'rabbitmq:alpine'
+    environment:
+      RABBITMQ_DEFAULT_USER: 'guest'
+      RABBITMQ_DEFAULT_PASS_FILE: '/run/secrets/rabbitmq_password'
+    secrets:
+      - rabbitmq_password
+    networks:
+      - backend_mq
+    expose:
+      - "5672"
+
+  celery_worker:
+    restart: always
+    build: './app_source/.'
+    env_file:
+      - 'env-shared'
+    command: '/bin/bash -c "source /app_source/run_celery.sh"'
+    volumes:
+      - './app_source:/app_source'
+    secrets:
+      - rabbitmq_password
+    networks:
+      - backend_mq
+    depends_on:
+      - rabbitmq
+
+volumes:
+  pgdata:
+
+networks:
+  frontend:
+  backend_db:
+  backend_mq:
+
+secrets:
+  postgres_password:
+    file: './secrets/postgres_password.txt'
+  rabbitmq_password:
+    file: './secrets/rabbitmq_password.txt'
+  ssl_key:
+    file: './secrets/nginx_key.pem'
+  ssl_cert:
+    file: './secrets/nginx_certificate.pem'
