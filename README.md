@@ -30,14 +30,17 @@ Docker environment for Django app development with Nginx, Gunicorn, Celery, Rabb
 
 ## Usage
 
-First steps:
+Recommended first steps:
 
 * Place TLS certificate in `secrets/nginx_certificate.pem`
 * Place TLS key in `secrets/nginx_key.pem`
-* Modify PostgreSQL password in `secrets/postgres_password.txt`
-* Modify RabbitMQ password in `secrets/rabbitmq_password.txt`
 * Modify settings in `env-db` and `env-shared` as appropriate/desired
     - `SECRET_KEY` in `env-shared` (Generate a random string of desired length)
+
+Optional configuration steps:
+
+* Modify PostgreSQL password in `secrets/postgres_password.txt`
+* Modify RabbitMQ password in `secrets/rabbitmq_password.txt`
 * Modify `docks/nginx/conf.d/web.conf` as appropriate/desired
 
 ### Running the container stack
