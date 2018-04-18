@@ -101,3 +101,6 @@ ENV/
 .mypy_cache/
 .DS_Store
 .DS_Store
+secrets/
+env-shared
+env-db
