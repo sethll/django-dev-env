@@ -13,6 +13,8 @@ main() {
     python manage.py makemigrations # my_app
     # migrate
     python manage.py migrate
+    # collect static files
+    python manage.py collectstatic --noinput
     # run gunicorn
     /usr/local/bin/gunicorn app_source.wsgi:application -w 2 -b :8000
 }
