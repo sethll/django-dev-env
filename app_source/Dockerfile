@@ -8,8 +8,10 @@ RUN apt-get update \
 #RUN postgres/setup_postgres.sh
 
 RUN pip install -r requirements.txt
-RUN adduser --uid 1000 --disabled-password --gecos '' unpriv && \
-    chown -R unpriv:unpriv /app_source
+RUN adduser --uid 1000 --disabled-password --gecos '' unpriv \
+    && chown -R unpriv:unpriv /app_source \
+    && mkdir /static \
+    && chown -R unpriv:unpriv /static
 
 EXPOSE 8000
 
